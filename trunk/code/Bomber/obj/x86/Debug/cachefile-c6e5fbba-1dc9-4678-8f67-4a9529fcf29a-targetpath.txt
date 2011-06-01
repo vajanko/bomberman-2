@@ -1,0 +1,17 @@
+Content\Images\mapBack1.xnb
+Content\Images\box2.xnb
+Content\Fonts\initial.xnb
+Content\Images\bomb1.xnb
+Content\Images\explosion.xnb
+Content\Images\smoke.xnb
+Content\Images\player1.xnb
+Content\Images\bonusBomb1.xnb
+Content\Images\bonusFire1.xnb
+Content\Images\simple1.xnb
+Content\Images\player2.xnb
+Content\Images\player3.xnb
+Content\Images\playersPanel.xnb
+Content\Images\player0.xnb
+Content\Images\mainMenu.xnb
+Content\Images\bonusSpeed1.xnb
+Content\Images\stone2.xnb
