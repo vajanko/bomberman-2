@@ -5,9 +5,15 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Bomber
 {
-    class Bomb : MapObject
+    class Bomb : DestroyableObject
     {
-        Player owner = null;        // the player who has planted this bomb        
+        #region Fields
+
+        Player owner = null;        // the player who has planted this bomb, when bomb explodes it is returend
+                                    // back to it's owner
+                                    // this reference always must be set and is set only once
+
+        #endregion
 
         #region Properities
 
@@ -38,7 +44,7 @@ namespace Bomber
         {
             // base.normalDraw(gameTime);
 
-            // sin + 1 is a number in rang (0,2)
+            // sin + 1 is a number in range (0,2)
             double elapsed = gameTime.TotalGameTime.TotalMilliseconds - planted;
             int size = (int)((Math.Sin((double)elapsed / 100) + 1) * 5);
 
@@ -59,57 +65,17 @@ namespace Bomber
 
         #endregion
 
-        /// <summary>
-        /// Plant and initialize the bomb at a particular position. It is added to the map components
-        /// and becomes updeatable.
-        /// </summary>
-        /// <param name="x">x-coordinate of the map position</param>
-        /// <param name="y">y-coordiante of the map position</param>
-        public void Plant(int x, int y, GameTime gameTime)
-        {
-            this.Position = new Vector2(x * Size, y * Size);    // this will setup also the map position
-            this.Initialize();  // initialize timers
-
-            if (map.IsFree(x, y))       // by adding to the map it becomes updateable
-                map.Components[x, y] = this;
-
-            // this is the time when bomb was planted
-            planted = gameTime.TotalGameTime.TotalMilliseconds;
-        }
-
-        #region Constructors
-
-        public Bomb(Map map, Player owner, string textureFile)
-            : base(map, textureFile)
-        {
-            this.owner = owner;
-        }
-
-        public Bomb(Map map, Player owner, int x, int y)
-            : base(map, x, y)
-        {
-            this.owner = owner;
-        }
-        public Bomb(Map map, Player owner, int x, int y, string textureFile) : base(map, x, y, textureFile) 
-        {
-            this.owner = owner;
-        }
-
-        #endregion
-
         #region IDestroyable Members
 
+        // this must be removed
         protected const double defaultTime = 3000; // miliseconds
         protected double time = defaultTime;       // after this time elapses, this bomb is going to exlode
         protected double planted;                  // time when the bomb was planted
 
-        // shortcut to map particle system
-        protected ParticleSystem explosion { get { return map.Explostion; } }
-
         public override void DestroyInitialize()
         {
             base.DestroyInitialize();
-            DestroingTime = 100;    // ms
+            DestroingTime = 100;    // ms - bomb is returned very quickly
         }
 
         // when exloaded, save the positions of the fire here
@@ -137,7 +103,7 @@ namespace Bomber
                 {
                     // destroing time is very short (100 ms), so the bomb is returned almost imediatelly to the
                     // player, but particles are living longer time - 500 ms
-                    explosion.AddParticles(new Vector2(x * Size + halfSize, y * Size + halfSize), 
+                    fire.AddParticles(new Vector2(x * Size + halfSize, y * Size + halfSize), 
                         4, 500, 0.2f, gameTime);
                     dir.Shift(ref x, ref y);    // shift my position in a particular direction
                     // kill beings
@@ -162,6 +128,49 @@ namespace Bomber
         {
             base.Remove();
             owner.AddBomb(this);             // return this bomb to the player
+        }
+
+        #endregion
+
+        #region Bomb Members
+
+        /// <summary>
+        /// Plant and initialize the bomb at a particular position. It is added to the map components
+        /// and becomes updeatable.
+        /// </summary>
+        /// <param name="x">x-coordinate of the map position</param>
+        /// <param name="y">y-coordiante of the map position</param>
+        public void Plant(int x, int y, GameTime gameTime)
+        {
+            this.Position = new Vector2(x * Size, y * Size);    // this will setup also the map position
+            this.Initialize();  // initialize timers
+
+            if (map.IsFree(x, y))       // by adding to the map it becomes updateable
+                map.Components[x, y] = this;
+
+            // this is the time when bomb was planted
+            planted = gameTime.TotalGameTime.TotalMilliseconds;
+        }
+
+        #endregion
+
+        #region Constructors
+
+        public Bomb(Map map, Player owner, string textureFile)
+            : base(map, textureFile)
+        {
+            this.owner = owner;
+        }
+
+        public Bomb(Map map, Player owner, int x, int y)
+            : base(map, x, y)
+        {
+            this.owner = owner;
+        }
+        public Bomb(Map map, Player owner, int x, int y, string textureFile)
+            : base(map, x, y, textureFile)
+        {
+            this.owner = owner;
         }
 
         #endregion

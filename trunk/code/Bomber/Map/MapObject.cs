@@ -9,7 +9,7 @@ namespace Bomber
     /// This is an acestor of all drawable map components.
     /// All MapObjects are placed in the map.
     /// </summary>
-    abstract class MapObject : IGame, IDestroyable
+    abstract class MapObject : IGame
     {
         #region Static Fields
 
@@ -17,6 +17,8 @@ namespace Bomber
         /// Size of the square for one component in the map
         /// </summary>
         static public float Size = 50f;
+
+        protected static Random generator = new Random();
 
         #endregion
 
@@ -159,32 +161,20 @@ namespace Bomber
         }
         public virtual void Initialize()
         {
-            DestroyInitialize();
             IsPassable = false;
         }
         /// <summary>
         /// Draw the game component to the sprite batch.
-        /// If an override needed, use normalDraw or destroingDraw methods
         /// </summary>
         public virtual void Draw(GameTime gameTime)
         {
-            if (Destroing)
-                destroingDraw(gameTime);
-            else
-                normalDraw(gameTime);
+            // notice that we do not call SpirteBatch.Begin() and .End(), because this component is
+            // drawn inside the map, where .Begin() and .End methods are called
+            if (texture != null)
+                SpriteBatch.Draw(texture, Area, Color.White);
         }
         public virtual void Update(GameTime gameTime)
-        {
-            if (Destroing)  // component is being destroing - an animation
-            {
-                if (gameTime.TotalGameTime.TotalMilliseconds - DestroyTime > DestroingTime)
-                    Remove();   // destring time elapsed - remove from map
-                else
-                    destroingUpdate(gameTime);  // play an animation
-            }
-            else   // nothig special - component is updated like it is
-                normalUpdate(gameTime);
-        }
+        { }
         public virtual void UnloadContent()
         {
             // prevent from disposing already disposed object
@@ -195,78 +185,12 @@ namespace Bomber
 
         #endregion
 
-        #region IDestroyable Members
-
-        public double DestroyTime
-        {
-            get;
-            protected set;
-        }
-        public double DestroingTime
-        {
-            get;
-            protected set;
-        }
-
-        public virtual void DestroyInitialize()
-        {
-            Destroing = false;
-            Destroyed = false;
-            DestroyTime = 0;
-            DestroingTime = 1000; // ms
-        }
-
-        public virtual bool Destroy(GameTime gameTime)
-        {
-            // if already destroyed
-            if (Destroing || Destroyed) return false;
-
-            Destroing = true;
-            // this is time when this component was destroyed
-            DestroyTime = gameTime.TotalGameTime.TotalMilliseconds;
-            return true;
-        }
-
-        public virtual void Remove()
-        {
-            Destroyed = true;
-            map.RemoveComponent(MapX, MapY);
-        }
-
-        public bool Destroing
-        {
-            get;
-            protected set;
-        }
-        public bool Destroyed
-        {
-            get;
-            protected set;
-        }
-
-        #endregion
-
-        #region Draw and Update
-
-        protected virtual void normalUpdate(GameTime gameTime) { }
-        protected virtual void destroingUpdate(GameTime gameTime) { }
-
-        protected virtual void normalDraw(GameTime gameTime)
-        {
-            // notice that we do not call SpirteBatch.Begin() and .End(), because this component is
-            // drawn inside the map, where .Begin() and .End methods are called
-            if (texture != null)
-                SpriteBatch.Draw(texture, Area, Color.White);
-        }
-        protected virtual void destroingDraw(GameTime gameTime) { }
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
         /// This constructor always must be called. Default values of the properties are set here.
         /// </summary>
+        /// <param name="map">Map where this component will be placed</param>
         private MapObject(Map map)
         {
             Width = Size;
@@ -275,16 +199,34 @@ namespace Bomber
 
             this.map = map;
         }
+        /// <summary>
+        /// Base constructor of all map objects
+        /// </summary>
+        /// <param name="map">Map where this component will be placed</param>
+        /// <param name="textureFile">Path to the file where texture for this object is stored</param>
         public MapObject(Map map, string textureFile)
             : this(map)
         {
             this.textureFile = textureFile;
         }
+        /// <summary>
+        /// Base constructor of all map objects
+        /// </summary>
+        /// <param name="map">Map where this component will be placed</param>
+        /// <param name="x">X-coordinate of the map position</param>
+        /// <param name="y">Y-coordinate of the map position</param>
         public MapObject(Map map, int x, int y)
             : this(map)
         {
             this.Position = new Vector2(x * Size, y * Size);
         }
+        /// <summary>
+        /// Base constructor of all map objects
+        /// </summary>
+        /// <param name="map">Map where this component will be placed</param>
+        /// <param name="x">X-coordinate of the map position</param>
+        /// <param name="y">Y-coordinate of the map position</param>
+        /// <param name="textureFile">Path to the file where texture for this object is stored</param>
         public MapObject(Map map, int x, int y, string textureFile)
             : this(map, textureFile)
         {

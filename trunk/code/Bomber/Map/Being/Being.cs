@@ -4,10 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Bomber
 {
-    abstract class Being : MapObject, IMovable
+    abstract class Being : DestroyableObject, IMovable
     {
-        protected static Random generator = new Random();
-
         #region Properities
 
         public bool DefHorizontalPosition { get { return Position.X % Size == 0; } }
@@ -38,17 +36,7 @@ namespace Bomber
             Vector2 current = this.Position;    // this is my position
             Vector2 def = new Vector2(MapX * Size, MapY * Size);
             Vector2 future;     // this is possible future position
-
-            if (Speed > 0)  // if already moveing - improve control
-            {
-                if (lastDirection.IsHorizontal() && dir.IsVertical())
-                {
-                    if (current.X != def.X)
-                        dir = lastDirection;
-                        //lastDirection.Shift(ref x, ref y);
-                }
-            }
-
+            
             Speed += frames * Acceleration;
 
 
@@ -73,6 +61,24 @@ namespace Bomber
                     future = new Vector2(x * Size, y * Size);   // this is position where I want to get
                 else future = def;
             }
+            doStep(dir, steps, ref current, future);
+            Position = current;
+            lastDirection = dir;
+        }
+
+        public void Stop()
+        {
+            Speed = 0;
+            lastDirection = Direction.None;
+        }
+
+        /// <summary>
+        /// Move the being in a particular direction. 
+        /// At this moment do not care about the walls, just move the being.
+        /// If the being is not rotated in the given direction, will be firstly.
+        /// </summary>
+        protected void doStep(Direction dir, float steps, ref Vector2 current, Vector2 future)
+        {
             switch (dir)
             {
                 case Direction.Up:
@@ -95,33 +101,6 @@ namespace Bomber
                         current.X = future.X;
                     else current.X += steps;
                     break;
-            }
-            Position = current;
-            lastDirection = dir;
-        }
-
-        public void Stop()
-        {
-            Speed = 0;
-            lastDirection = Direction.None;
-        }
-
-        /// <summary>
-        /// Move the being in a particular direction. 
-        /// At this moment do not care about the walls, just move the being.
-        /// If the being is not rotated in the given direction, will be firstly.
-        /// </summary>
-        private void doStep(Direction dir, float frames)
-        {
-            // rotate if it is necessary
-            rotateToDir(dir, ref frames);
-            // and use the rest of frames to move
-            switch (dir)
-            {
-                case Direction.Up: Top -= frames; break;
-                case Direction.Down: Top += frames; break;
-                case Direction.Left: Left -= frames; break;
-                case Direction.Right: Left += frames; break;
             }
         }
         /// <summary>
@@ -191,12 +170,6 @@ namespace Bomber
 
         #endregion
 
-        #region Constructors
-
-        public Being(Map map, int x, int y, string textureFile) : base(map, x, y, textureFile) { }
-
-        #endregion
-
         #region IDestroyable Members
 
         public override void DestroyInitialize()
@@ -206,14 +179,21 @@ namespace Bomber
         }
         public override bool Destroy(GameTime gameTime)
         {
-            if (base.Destroy(gameTime))
+            if (base.Destroy(gameTime)) // if not already destoryed remove from map
             {
                 map.RemoveBeing(this);
                 return true;
             }
-            else return false;
+            else return false;  // this means that it is already destroing
         }
 
         #endregion
+
+        #region Constructors
+
+        public Being(Map map, int x, int y, string textureFile) : base(map, x, y, textureFile) { }
+
+        #endregion
+
     }
 }

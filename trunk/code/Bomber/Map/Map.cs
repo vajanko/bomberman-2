@@ -308,6 +308,7 @@ namespace Bomber
             StreamReader reader;
             try
             {
+                Path.Combine(Content.RootDirectory, "Maps\\" + filename);
                 reader = new StreamReader(filename);
             }
             catch (Exception)
@@ -342,7 +343,7 @@ namespace Bomber
         private void createComponent(char c, int x, int y)
         {   // digit means - it is a place for player
             if (char.IsDigit(c))
-            {
+            {   // in the map file, there can be more digits (reserved for players) but we do not use all of them
                 int index = c - '0';
                 if (index < ActivePlayers)   // only add player if it is allowed
                     players[index] = new Player(this, x, y, "Images/player" + index.ToString(), index);
@@ -361,7 +362,7 @@ namespace Bomber
 
                         int rnd = generator.Next(0, 7);
                         BonusType type = BonusType.None;
-                        if (rnd < 3)    // only 3 of 7 barrel have some bonus
+                        if (rnd < 4)    // only 4 of 7 barrel have some bonus
                             type = (BonusType)rnd;
                         comp = new Barrel(this, x, y, "Images/box2", type);
                         break;
@@ -447,8 +448,7 @@ namespace Bomber
 
         public Map(Game game, SpriteBatch spriteBatch, Screen parent, int playersCount, string mapFile)
             : this(game, spriteBatch, parent)
-        {
-            //_spriteBatch = spriteBatch;
+        {            
             this.ActivePlayers = playersCount;
 
             players = new Player[playersCount];
@@ -457,7 +457,7 @@ namespace Bomber
 
             creatures = new List<Being>();
             SimpleCreature cr;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < playersCount * 2; i++)
             {
                 cr = new SimpleCreature(this, generator.Next(3, Width - 3), generator.Next(3, Height - 3), "Images/simple1");
                 creatures.Add(cr);

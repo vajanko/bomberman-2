@@ -17,7 +17,7 @@ namespace Bomber
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            this.IsMouseVisible = true;
+            this.IsMouseVisible = false;
             this.graphics.IsFullScreen = false;
         }
 
@@ -30,6 +30,10 @@ namespace Bomber
 
             MainMenu menu = new MainMenu(this, spriteBatch, null);
             Components.Add(menu);
+
+            //int[] wins = { 1, 4, 5, 4 };
+            //Results res = new Results(this, spriteBatch, null, wins);
+            //Components.Add(res);
 
             base.Initialize();
         }
