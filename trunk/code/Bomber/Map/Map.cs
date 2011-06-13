@@ -12,7 +12,7 @@ namespace Bomber
 {
     class Map : Screen, IDestroyable
     {
-        #region Properities
+        #region Properties
 
         /// <summary>
         /// The area where the map is dispalyed on the screen
@@ -308,7 +308,7 @@ namespace Bomber
             StreamReader reader;
             try
             {
-                Path.Combine(Content.RootDirectory, "Maps\\" + filename);
+                filename = Path.Combine(Content.RootDirectory, "Maps\\" + filename);
                 reader = new StreamReader(filename);
             }
             catch (Exception)
