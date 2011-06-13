@@ -10,7 +10,6 @@ namespace Bomber
     {
         // list of all living particles in this particle system
         protected List<ParticleData> particles;
-        protected Random generator;
 
         public override void Initialize()
         {

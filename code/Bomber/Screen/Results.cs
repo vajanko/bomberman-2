@@ -9,15 +9,23 @@ namespace Bomber
 {
     class Results : Screen
     {
+
+        #region Fields
+
         // how long the result list will be displayed
         private const int displayTime = 3000;  // ms
         // how long already displayed
         private int time = 0;
-        private int[] wins;
-        private int winner;
+        private int[] wins;     // number of wins for each player
+        private int winner;     // index of the winner
         private SpriteFont font;
 
+        // texture of each player
         protected Texture2D[] textures;
+
+        #endregion
+
+        #region IGame Members
 
         public override void Initialize()
         {
@@ -95,6 +103,7 @@ namespace Bomber
                 textures[i].Dispose();
         }
 
+        #endregion
 
         #region Constructors
 
@@ -103,6 +112,7 @@ namespace Bomber
         {
             backgroundFile = "Images/mainMenu";
             this.wins = wins;
+            // only load texture of participating players
             textures = new Texture2D[wins.Length];
         }
 

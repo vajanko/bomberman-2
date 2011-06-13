@@ -46,7 +46,7 @@ namespace Bomber
                 (int)(map.Width * MapObject.Size), (int)MapObject.Size);            
 
             Game.Components.Add(map);
-            NextScreen(map);
+            NextScreen(map);    // switch to map screen
         }
         private void showResults()
         {
