@@ -8,12 +8,12 @@ namespace Bomber
     /// Stone is used in the map to create places where noone can enter and which could
     /// not be destroyed. This is also useful for palyers to hide from the explosions
     /// </summary>
-    class Stone : MapObject
+    class Stone : DestroyableObject
     {
         public override void Initialize()
         {
             base.Initialize();
-            IsPassable = false;
+            IsPassable = false; // no moveing object can pass throught stone
         }
 
         public override bool Destroy(GameTime gameTime)

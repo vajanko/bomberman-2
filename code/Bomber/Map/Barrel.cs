@@ -5,21 +5,22 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Bomber
 {
     /// <summary>
-    /// Barrel is used in the map to create place where noone can enter. But it can be destoryed
+    /// Barrel is used in the map to create place where no one can enter. But it can be destoryed
     /// by a bomb. Inside the barrel some bonus may hide.
     /// </summary>
-    class Barrel : MapObject
+    class Barrel : DestroyableObject
     {
-        public BonusType BonusType = BonusType.None;
-        private Bonus bonus = null;
+        #region Fields
 
-        #region Game
+        private Bonus bonus = null;     // instance of the bonus hidden inside barrel
+
+        #endregion
+
+        #region IGame Memmbers
 
         public override void Initialize()
         {
             base.Initialize();
-            Destroing = false;
-            Destroyed = false;
             if (bonus != null)
                 bonus.Initialize();
 
@@ -27,25 +28,15 @@ namespace Bomber
             IsPassable = false;
         }
         public override void LoadContent()
-        {
+        {   // only difference to the default load content: also load bonus (if any)
             base.LoadContent();
             if (bonus != null)
                 bonus.LoadContent();
         }       
-        // notice: We do not unload the bonus object. This will be done by map.
-        // unload method for this component is in the base class
-
-        #endregion
-
-        #region Draw and Update
-
-        // nothig to override
 
         #endregion
 
         #region IDestroyable Members
-
-        protected ParticleSystem smoke { get { return map.Smoke; } }
 
         public override void DestroyInitialize()
         {
@@ -59,7 +50,7 @@ namespace Bomber
                 smoke.AddParticles(Position + new Vector2(Size / 2), 30, DestroingTime * 5, 1.5f, gameTime);
                 return true;
             }
-            return false;
+            return false;   // this meads that barrel is already destroing or destroyed
         }
         public override void Remove()
         {
@@ -74,16 +65,29 @@ namespace Bomber
 
         #region Constructors
 
-        //public Box(Map map, int x, int y) : base(map, x, y) { }
+        /// <summary>
+        /// Create an instance of barrel without any bonus inside
+        /// </summary>
+        /// <param name="map">Map where this component will be placed</param>
+        /// <param name="x">X-coordinate of the map position</param>
+        /// <param name="y">Y-coordinate of the map position</param>
+        /// <param name="textureFile">Path to the file where barrel texture is stored</param>
         public Barrel(Map map, int x, int y, string textureFile)
-            : base(map, x, y, textureFile)
-        {
-        }
+            : base(map, x, y, textureFile) { }
+
+        /// <summary>
+        /// Create an instance of barrel with a particular bonus hidden inside
+        /// </summary>
+        /// <param name="map">Map where this component will be placed</param>
+        /// <param name="x">X-coordinate of the map position</param>
+        /// <param name="y">Y-coordinate of the map position</param>
+        /// <param name="textureFile">Path to the file where barrel texture is stored</param>
+        /// <param name="type">Type of the bonus hidden inside the barrel</param>
         public Barrel(Map map, int x, int y, string textureFile, BonusType type)
             : this(map, x, y, textureFile)
         {
-            BonusType = type;
-            switch (BonusType)
+            //BonusType = type;
+            switch (type)
             {
                 case BonusType.Bomb: bonus = new BonusBomb(map, MapX, MapY, "Images/bonusBomb1"); break;
                 case BonusType.Fire: bonus = new BonusFire(map, MapX, MapY, "Images/bonusFire1"); break;

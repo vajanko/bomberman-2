@@ -48,11 +48,17 @@ namespace Bomber
         {
             int x = MapX;
             int y = MapY;
-            // get some random direction
-            Direction dir = (Direction)(generator.Next(0, 100) % 4);
+            // get some random direction            
+            Direction dir;
+            int rnd = generator.Next(100);
+            // but there is a great probability that we will leave the current direction
+            // do it seems that the creature is following some direction
+            if (rnd > 50 && currentDirection != Direction.None)
+                dir = currentDirection;
+            else dir = (Direction)(rnd % 4);
 
             for (int i = 0; i < 4; i++)
-            {
+            {               
                 x = MapX;
                 y = MapY;
                 // move current position in the random direction

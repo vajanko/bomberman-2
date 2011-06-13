@@ -8,13 +8,14 @@ namespace Bomber
 {
     class ParticleSystem : MapObject
     {
+        // list of all living particles in this particle system
         protected List<ParticleData> particles;
         protected Random generator;
 
         public override void Initialize()
         {
             base.Initialize();
-            particles.Clear();
+            particles.Clear();  // empty list
         }
         public override void Draw(GameTime gameTime)
         {
@@ -27,24 +28,29 @@ namespace Bomber
             }
         }
         public override void Update(GameTime gameTime)
-        {
+        {   // get the current time
             float now = (float)gameTime.TotalGameTime.TotalMilliseconds;
-            ParticleData data;
+            ParticleData data;  // points to the current particle
 
-
+            // update all particles, remove old ones
+            // start at the end, as we need to move all particles to left, when some in the middle is removed
             for (int i = particles.Count - 1; i >= 0; i--)
             {
                 data = particles[i];
                 float timeAlive = now - data.BirthTime;
-                if (timeAlive > data.MaxAge)
+                if (timeAlive > data.MaxAge)    // too old particle
                     particles.RemoveAt(i);
                 else
-                {
+                {   // relAge is 0 at it's beginning and 1 at the end of it's life
                     float relAge = timeAlive / (float)data.MaxAge;
+
+                    // update position
                     data.Position = 0.5f * data.Accelaration * relAge * relAge + data.Direction * relAge + data.OrginalPosition;
 
+                    // update color
                     data.ModColor = new Color(new Vector4(1.0f - relAge));
 
+                    // update size
                     Vector2 fromCenter = data.Position - data.OrginalPosition;
                     float distance = fromCenter.Length();
                     data.Scaling = (50 + distance) / 200;
@@ -83,6 +89,11 @@ namespace Bomber
 
         #region Constructors
 
+        /// <summary>
+        /// Create an instance of particle system
+        /// </summary>
+        /// <param name="map">Map where this component will be placed</param>
+        /// <param name="textureFile">Path to the file where texture for this particle system is stored</param>
         public ParticleSystem(Map map, string textureFile) : base(map, textureFile) 
         {
             particles = new List<ParticleData>();
@@ -92,6 +103,9 @@ namespace Bomber
         #endregion
     }
 
+    /// <summary>
+    /// Holds data for an individual particle
+    /// </summary>
     public struct ParticleData
     {
         public float BirthTime;

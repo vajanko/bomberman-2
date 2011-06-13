@@ -100,6 +100,11 @@ namespace Bomber
 
         #endregion
 
+        public override void Move(Direction dir, int frames)
+        {
+            base.Move(dir, frames);
+        }
+
         /// <summary>
         /// This method is called by a bomb when it has exploaded. It is returned to the player and reused.
         /// Could be called by bonus to add to player a new bomb

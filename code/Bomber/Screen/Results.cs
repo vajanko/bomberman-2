@@ -14,10 +14,31 @@ namespace Bomber
         // how long already displayed
         private int time = 0;
         private int[] wins;
+        private int winner;
         private SpriteFont font;
 
         protected Texture2D[] textures;
 
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            int max = -1;
+            // find player with maximum number of wins
+            for (int i = 0; i < wins.Length; i++)
+                if (wins[i] > max)
+                    max = wins[i];
+            int maxPlayers = 0; // number of players who have maximum number of wins
+            // we expect one - only one winner of whole tournament
+            for (int i = 0; i < wins.Length; i++)
+                if (wins[i] == max)
+                {
+                    maxPlayers++;
+                    winner = i;     // this will be only useful if maxPlayers == 1
+                }
+            if (maxPlayers > 1) // noone is the winner of whole tournament
+                winner = -1;
+        }
         protected override void LoadContent()
         {
             // load background
@@ -38,8 +59,18 @@ namespace Bomber
             spriteBatch.DrawString(font, "Results", new Vector2(300, 100), Color.White);
             for (int i = 0; i < wins.Length; i++)
             {
-                spriteBatch.Draw(textures[i], new Rectangle(200, 200 + i * 100, (int)MapObject.Size, (int)MapObject.Size),
-                    Color.White);
+                Rectangle rec;
+                if (i == winner)    // we are drawing the texture of the winner
+                {
+                    // sin + 1 is a number in range (0,2)
+                    double elapsed = gameTime.TotalGameTime.TotalMilliseconds;
+                    int size = (int)((Math.Sin((double)elapsed / 100) + 1) * 5);
+
+                    rec = new Rectangle(200 + size, 200 + i * 100 + size, (int)MapObject.Size - 2 * size, (int)MapObject.Size - 2 * size);
+                }
+                else rec = new Rectangle(200, 200 + i * 100, (int)MapObject.Size, (int)MapObject.Size);
+
+                spriteBatch.Draw(textures[i], rec, Color.White);  
                 spriteBatch.DrawString(font, wins[i].ToString(), new Vector2(300, 200 + i * 100), Color.White);
             }
             spriteBatch.End();
@@ -48,8 +79,11 @@ namespace Bomber
         {
             base.Update(gameTime);
 
-            if (time > displayTime || (previous.IsKeyDown(close) && current.IsKeyUp(close))) 
-                parent.FinishMe(this);
+            if (time > displayTime || (previous.IsKeyDown(close) && current.IsKeyUp(close)))
+            {
+                if (parent != null)
+                    parent.FinishMe(this);
+            }
             else time += gameTime.ElapsedGameTime.Milliseconds;
         }
         protected override void UnloadContent()

@@ -14,7 +14,14 @@
     <XnaCrossPlatformGroupID>9dc6f055-351f-43fd-9631-7c73a8dc0b37</XnaCrossPlatformGroupID>
     <ApplicationIcon>Game.ico</ApplicationIcon>
     <Thumbnail>GameThumbnail.png</Thumbnail>
-    <PublishUrl>publish\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ManifestCertificateThumbprint>82CEA00AD67F1567E920B6B5AF481CC0FD775AA6</ManifestCertificateThumbprint>
+    <ManifestKeyFile>Bomber_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <TargetZone>LocalIntranet</TargetZone>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+    <SignManifests>false</SignManifests>
+    <PublishUrl>E:\Documents and Settings\kovaco\My Documents\Visual Studio 2008\Projects\university\Bomber\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -24,10 +31,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -85,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IGame.cs" />
+    <Compile Include="Map\DestroyableObject.cs" />
     <Compile Include="Map\OtherComponents\ParticleSystem.cs" />
     <Compile Include="Map\Being\Being.cs" />
     <Compile Include="Map\Being\SimpleCreature.cs" />
@@ -109,7 +117,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Screen\MainMenu.cs" />
+    <Compile Include="Menu\MainMenu.cs" />
     <Compile Include="Screen\Results.cs" />
     <Compile Include="Screen\Screen.cs" />
   </ItemGroup>
@@ -159,6 +167,9 @@
       <ProductName>Microsoft XNA Framework Redistributable 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\app.manifest" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
